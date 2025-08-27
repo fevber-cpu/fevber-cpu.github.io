@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>abt shit </title>
+<style>
+body {
+  margin:0; font-family:'Segoe UI',sans-serif; height:100vh; display:flex; flex-direction:row;
+  background: linear-gradient(135deg, #0a1f2c, #001a33); color: #cce7ff;
+}
+
+/* Sidebar */
+#sidebar {
+  width:200px; background:#0c1e2b; display:flex; flex-direction:column; box-shadow:2px 0 10px rgba(0,0,0,0.5);
+}
+#sidebar button {
+  padding:12px; border:none; background:#0c1e2b; color:#aaa; font-weight:bold; cursor:pointer; transition: all 0.3s ease;
+}
+#sidebar button:hover, #sidebar button.active {
+  background:linear-gradient(90deg, #00f0ff, #00bfff); color:#fff;
+}
+
+/* Main container */
+#main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+
+/* Tabs */
+.tab { display:none; flex:1; overflow:auto; padding:10px; transition:opacity 0.4s; }
+.tab.active { display:flex; flex-direction:column; opacity:1; }
+
+/* Editor Sub-tabs */
+.editorSubTab { display:none; flex:1; flex-direction:column; }
+.editorSubTab.active { display:flex; }
+
+/* Tools Sub-tabs */
+.toolSubTab { display:none; flex:1; flex-direction:column; gap:5px; }
+.toolSubTab.active { display:flex; }
+
+/* Home tab - Discord style */
+#home { justify-content:center; align-items:center; display:flex; }
+#home .profile-card {
+  background:#1c2a39; border-radius:15px; padding:20px; width:300px; box-shadow:0 0 20px rgba(0,255,255,0.3); text-align:center;
+}
+#home img { width:100px; height:100px; border-radius:50%; border:3px solid #00f0ff; box-shadow:0 0 15px #00f0ff; }
+#home h1 { margin:10px 0; color:#00f0ff; font-size:22px; }
+#home p { color:#cce7ff; font-size:14px; }
+#home .socials button { margin:5px; padding:8px 12px; border:none; border-radius:8px; cursor:pointer; transition:0.3s; }
+#home .socials button:hover { box-shadow:0 0 8px #00f0ff, 0 0 15px #00bfff; }
+
+/* Editor & Tools */
+#editor { flex:1; display:flex; flex-direction:column; gap:5px; }
+textarea { flex:1; margin:2px; padding:10px; font-family:monospace; font-size:14px; color:#00f0ff; background:#0f1c2a; border-radius:6px; box-shadow:inset 0 0 5px rgba(0,255,255,0.2); resize:none; }
+iframe { flex:1; margin:2px; border-radius:8px; border:1px solid #00f0ff; box-shadow:0 0 8px rgba(0,255,255,0.2); }
+
+button { border-radius:5px; background: linear-gradient(90deg,#00f0ff,#00bfff); color:#fff; font-weight:bold; cursor:pointer; transition:all 0.3s ease; }
+button:hover { box-shadow:0 0 8px #00f0ff,0 0 15px #00bfff; }
+
+.tool { background:#1e1e2e; border-radius:8px; padding:8px; margin:5px; box-shadow:0 0 10px rgba(0,255,255,0.1); flex:1 1 300px; display:flex; flex-direction:column; }
+
+/* Responsive for mobile */
+@media (max-width:768px){
+  body { flex-direction:column; }
+  #sidebar { width:100%; flex-direction:row; overflow-x:auto; }
+  #sidebar button { flex:1 0 auto; font-size:12px; padding:10px; }
+  #editor { flex-direction:column; }
+  textarea, iframe { height:200px; }
+  .tool { flex:1 1 100%; }
+}
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+  <button onclick="openTab('home')" class="active">Home</button>
+  <button onclick="openTab('editorTab')">Editor</button>
+  <button onclick="openTab('toolsTab')">Tools</button>
+</div>
+
+<div id="main">
+  <!-- Home Page -->
+  <div id="home" class="tab active">
+    <div class="profile-card">
+      <img src="https://cdn.discordapp.com/avatars/1216212793947328603/4cdb22e69393b811a3353db7513952ba.webp?size=1024" alt="Profile Picture">
+      <h1>Fevber</h1>
+      <p>hello man ts is my play ground of code u can use it :).</p>
+      <div class="socials">
+        <a href="https://discord.gg/94ZzwjX2UE" target="_blank"><button>Discord server</button></a>
+        <a href="https://lucent0-hub.static.hf.space/index.html" target="_blank"><button>scripts</button></a>
+        <a href="https://lucent0-hub.static.hf.space/Verification-Portal.html" target="_blank"><button>key system for scripts</button></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Editor Tab -->
+  <div id="editorTab" class="tab">
+    <!-- Editor Sub-tabs -->
+    <div style="display:flex; margin-bottom:5px; gap:5px;">
+      <button onclick="openEditorTab('htmlArea')">HTML</button>
+      <button onclick="openEditorTab('cssArea')">CSS</button>
+      <button onclick="openEditorTab('jsArea')">JS</button>
+      <button onclick="openEditorTab('previewArea')">Preview</button>
+    </div>
+
+    <div id="htmlArea" class="editorSubTab active"><textarea id="htmlCode" placeholder="HTML Code"></textarea></div>
+    <div id="cssArea" class="editorSubTab"><textarea id="cssCode" placeholder="CSS Code"></textarea></div>
+    <div id="jsArea" class="editorSubTab"><textarea id="jsCode" placeholder="JavaScript Code"></textarea></div>
+    <div id="previewArea" class="editorSubTab"><iframe id="preview"></iframe></div>
+
+    <div style="display:flex; margin-top:5px; gap:5px;">
+      <button onclick="runPreview()">Run Preview</button>
+      <button onclick="saveFile()">Save File</button>
+      <button onclick="copyToClipboard()">Copy Code</button>
+      <button onclick="clearConsole()">Clear Console</button>
+    </div>
+  </div>
+
+  <!-- Tools Tab -->
+  <div id="toolsTab" class="tab">
+    <div style="display:flex; flex-wrap:wrap; margin-bottom:5px; gap:5px;">
+      <button onclick="openToolTab('siteTool')">Website Preview</button>
+      <button onclick="openToolTab('bingTool')">Bing Search</button>
+      <button onclick="openToolTab('jsonTool')">JSON Formatter</button>
+      <button onclick="openToolTab('regexTool')">Regex Tester</button>
+      <button onclick="openToolTab('base64Tool')">Base64</button>
+      <button onclick="openToolTab('consoleTool')">Console</button>
+    </div>
+
+    <div id="siteTool" class="toolSubTab active">
+      <input type="text" id="siteUrl" placeholder="https://example.com">
+      <button onclick="loadIframe()">Load</button>
+      <iframe id="siteFrame"></iframe>
+    </div>
+    <div id="bingTool" class="toolSubTab">
+      <input type="text" id="searchQuery" placeholder="Search on Bing...">
+      <button onclick="searchBing()">Search</button>
+      <iframe id="searchFrame"></iframe>
+    </div>
+    <div id="jsonTool" class="toolSubTab">
+      <textarea id="jsonInput" placeholder='Paste JSON here'></textarea>
+      <button onclick="formatJSON()">Format JSON</button>
+      <textarea id="jsonOutput" placeholder='Formatted JSON'></textarea>
+    </div>
+    <div id="regexTool" class="toolSubTab">
+      <input type="text" id="regexPattern" placeholder="Regex pattern">
+      <input type="text" id="regexText" placeholder="Text to test">
+      <button onclick="testRegex()">Test</button>
+      <textarea id="regexResult" placeholder="Result"></textarea>
+    </div>
+    <div id="base64Tool" class="toolSubTab">
+      <textarea id="base64Input" placeholder="Text"></textarea>
+      <button onclick="encodeBase64()">Encode</button>
+      <button onclick="decodeBase64()">Decode</button>
+      <textarea id="base64Output" placeholder="Output"></textarea>
+    </div>
+    <div id="consoleTool" class="toolSubTab">
+      <textarea id="consoleLog" placeholder="console.log output..." readonly></textarea>
+      <button onclick="clearConsole()">Clear Console</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Main Tabs
+function openTab(tabId){
+  const tabs = document.querySelectorAll('.tab');
+  tabs.forEach(t => t.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+
+  const buttons = document.querySelectorAll('#sidebar button');
+  buttons.forEach(b => b.classList.remove('active'));
+  document.querySelector(`#sidebar button[onclick*="${tabId}"]`).classList.add('active');
+}
+
+// Editor Sub-tabs
+function openEditorTab(subTabId){
+  const tabs = document.querySelectorAll('.editorSubTab');
+  tabs.forEach(t => t.classList.remove('active'));
+  document.getElementById(subTabId).classList.add('active');
+}
+
+// Tools Sub-tabs
+function openToolTab(subTabId){
+  const tabs = document.querySelectorAll('.toolSubTab');
+  tabs.forEach(t => t.classList.remove('active'));
+  document.getElementById(subTabId).classList.add('active');
+}
+
+// Editor Functions
+function runPreview() {
+  const html = document.getElementById('htmlCode').value;
+  const css = "<style>" + document.getElementById('cssCode').value + "</style>";
+  const js = "<script>" + document.getElementById('jsCode').value + "<\/script>";
+  document.getElementById('preview').srcdoc = html + css + js;
+  logToConsole("Preview updated");
+}
+
+function saveFile() {
+  const content = document.getElementById('htmlCode').value + "\n" + 
+                  document.getElementById('cssCode').value + "\n" + 
+                  document.getElementById('jsCode').value;
+  const blob = new Blob([content], {type:"text/plain"});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = "code.txt";
+  a.click();
+  logToConsole("File saved");
+}
+
+function copyToClipboard() {
+  const content = document.getElementById('htmlCode').value + "\n" + 
+                  document.getElementById('cssCode').value + "\n" + 
+                  document.getElementById('jsCode').value;
+  navigator.clipboard.writeText(content);
+  logToConsole("Copied to clipboard");
+}
+
+// Tools Functions
+function loadIframe() {
+  const url = document.getElementById('siteUrl').value;
+  document.getElementById('siteFrame').src = url;
+  logToConsole("Website loaded: " + url);
+}
+
+function searchBing() {
+  const query = encodeURIComponent(document.getElementById('searchQuery').value);
+  document.getElementById('searchFrame').src = "https://www.bing.com/search?q=" + query;
+  logToConsole("Bing search: " + query);
+}
+
+function formatJSON() {
+  const input = document.getElementById('jsonInput').value;
+  try {
+    const obj = JSON.parse(input);
+    document.getElementById('jsonOutput').value = JSON.stringify(obj,null,2);
+    logToConsole("JSON formatted successfully");
+  } catch(e){
+    document.getElementById('jsonOutput').value = "Invalid JSON: " + e;
+    logToConsole("JSON Error: " + e);
+  }
+}
+
+function testRegex() {
+  try {
+    const pattern = document.getElementById('regexPattern').value;
+    const text = document.getElementById('regexText').value;
+    const regex = new RegExp(pattern,"g");
+    const matches = text.match(regex);
+    document.getElementById('regexResult').value = matches ? matches.join("\n") : "No match";
+    logToConsole("Regex tested");
+  } catch(e){
+    document.getElementById('regexResult').value = "Error: " + e;
+    logToConsole("Regex Error: " + e);
+  }
+}
+
+function encodeBase64() {
+  const input = document.getElementById('base64Input').value;
+  document.getElementById('base64Output').value = btoa(input);
+  logToConsole("Base64 encoded");
+}
+
+function decodeBase64() {
+  const input = document.getElementById('base64Input').value;
+  try {
+    document.getElementById('base64Output').value = atob(input);
+    logToConsole("Base64 decoded");
+  } catch(e){
+    document.getElementById('base64Output').value = "Error: " + e;
+    logToConsole("Base64 Error: " + e);
+  }
+}
+
+// Console logging
+function logToConsole(message){
+  const consoleArea = document.getElementById('consoleLog');
+  consoleArea.value += message + "\n";
+  consoleArea.scrollTop = consoleArea.scrollHeight;
+}
+
+function clearConsole(){
+  document.getElementById('consoleLog').value = "";
+}
+</script>
+</body>
+</html>
